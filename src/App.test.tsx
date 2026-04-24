@@ -117,7 +117,9 @@ describe("App", () => {
 
     await user.keyboard("{ArrowRight}");
 
-    expect(screen.getByRole("heading", { name: /i love eating chicken breast/i })).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole("heading", { name: /i love eating chicken breast/i })).toBeInTheDocument();
+    });
   });
 
   it("renders shared payload data on the results page", () => {
@@ -164,9 +166,12 @@ describe("App", () => {
     });
 
     const copiedValue = writeText.mock.calls[0][0] as string;
+    const copiedUrl = new URL(copiedValue);
 
-    expect(copiedValue).toMatch(/^http:\/\/localhost\/\?sid=/);
-    expect(copiedValue).toContain("&share=");
+    expect(copiedUrl.origin).toMatch(/^http:\/\/localhost(?::\d+)?$/);
+    expect(copiedUrl.pathname).toBe("/");
+    expect(copiedUrl.searchParams.get("sid")).toBeTruthy();
+    expect(copiedUrl.searchParams.get("share")).toBeTruthy();
     expect(copiedValue).not.toContain("My taste profile:");
   });
 });
