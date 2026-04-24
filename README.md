@@ -155,10 +155,8 @@ All final code and docs were manually reviewed and validated through lint/test/b
 ## Screenshots 
 
 ### Intro
-
-| Dark | Light |
-| --- | --- |
-| ![Intro - Dark](docs/screenshots/intro-dark-theme.png) | ![Intro - Light](docs/screenshots/intro-light-theme.png) |
+![Intro - Dark](docs/screenshots/intro-dark-theme.png)  
+![Intro - Light](docs/screenshots/intro-light-theme.png) 
 
 ### Swipe
 
