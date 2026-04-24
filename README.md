@@ -24,7 +24,6 @@ React app that captures food preferences through swipe interactions and generate
 - React
 - TypeScript
 - Vite
-
 - Framer Motion
 - Context API
 - CSS (token-based theming + glassmorphism)
