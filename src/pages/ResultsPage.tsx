@@ -410,13 +410,15 @@ export function ResultsPage(): JSX.Element {
     };
 
     const url = new URL(window.location.href);
-    url.pathname = "/results";
+    const shareRoot = url.pathname.replace(/\/results\/?$/, "/");
+
+    url.pathname = shareRoot || "/";
     url.search = "";
     url.searchParams.set("sid", payload.id);
     url.searchParams.set("share", encodeSharePayload(payload));
 
     const summary = `My taste profile: ${highlightSlides[0].items.map((item) => item.label).join(", ")}.`;
-    const shareData: ShareData = {
+    const shareData = {
       title: "CalorAI Taste Profile",
       text: summary,
       url: url.toString()
@@ -427,7 +429,7 @@ export function ResultsPage(): JSX.Element {
         await navigator.share(shareData);
         setShareLabel("Shared");
       } else if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+        await navigator.clipboard.writeText(shareData.url);
         setShareLabel("Copied");
       } else {
         setShareLabel("Unavailable");
