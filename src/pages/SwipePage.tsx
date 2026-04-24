@@ -9,7 +9,7 @@ import { useTasteProfile } from "../contexts/TasteProfileContext";
 import { useSwipe } from "../hooks/useSwipe";
 
 export function SwipePage(): JSX.Element {
-  const { currentFood, reactToFood, progress, currentIndex, isCompleted } = useTasteProfile();
+  const { currentFood, reactToFood, progress, isCompleted } = useTasteProfile();
   const navigate = useNavigate();
   const [swipeDirection, setSwipeDirection] = useState<SwipeChoice | null>(null);
   const [previewDirection, setPreviewDirection] = useState<SwipeChoice | null>(null);
@@ -20,13 +20,9 @@ export function SwipePage(): JSX.Element {
         return;
       }
 
-      if (choice === "left" && currentIndex === 0) {
-        return;
-      }
-
       setSwipeDirection(choice);
     },
-    [currentFood, currentIndex, swipeDirection]
+    [currentFood, swipeDirection]
   );
 
   const handleSwipeComplete = useCallback(
@@ -59,6 +55,10 @@ export function SwipePage(): JSX.Element {
 
   useEffect(() => {
     const handler = (event: KeyboardEvent): void => {
+      if (event.key.startsWith("Arrow")) {
+        event.preventDefault();
+      }
+
       swipeByKeyboard(event.key);
     };
 

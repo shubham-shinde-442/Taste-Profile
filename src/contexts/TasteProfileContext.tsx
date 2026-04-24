@@ -70,26 +70,6 @@ export function TasteProfileProvider({ children }: TasteProfileProviderProps): J
       reactions: state.reactions,
       progress: totalFoods === 0 ? 0 : Math.min(state.currentIndex / totalFoods, 1),
       reactToFood: (choice) => {
-        if (choice === "left") {
-          if (state.currentIndex === 0) {
-            return;
-          }
-
-          const previousIndex = state.currentIndex - 1;
-          const previousFood = foods[previousIndex];
-          const nextReactions = { ...state.reactions };
-
-          if (previousFood) {
-            delete nextReactions[previousFood.id];
-          }
-
-          setState({
-            currentIndex: previousIndex,
-            reactions: nextReactions
-          });
-          return;
-        }
-
         if (!currentFood || isCompleted) {
           return;
         }
