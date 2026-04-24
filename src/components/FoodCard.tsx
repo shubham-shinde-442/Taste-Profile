@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import type { MotionProps } from "framer-motion";
 import type { Food } from "../types/food";
@@ -22,11 +23,28 @@ const SWIPE_OFFSETS: Record<SwipeChoice, { x: number; rotate: number }> = {
 const BADGE_PREVIEW_DELAY = 0.6;
 const SWIPE_EXIT_DURATION = 0.5;
 
-const SWIPE_BADGE: Record<SwipeChoice, { label: string; className: string }> = {
-  left: { label: "No", className: "swipe-badge-left" },
-  right: { label: "Yes", className: "swipe-badge-right" },
-  up: { label: "Superlike ✨", className: "swipe-badge-up" },
-  down: { label: "Unsure", className: "swipe-badge-down" }
+const FOOD_EMOJI_FALLBACK: Record<string, string> = {
+  "Sweet Potato": "🍠",
+  "Black Beans": "🫘"
+};
+
+function getFoodEmoji(food: Food): string {
+  return FOOD_EMOJI_FALLBACK[food.name] ?? "🍽️";
+}
+
+const SWIPE_BADGE: Record<SwipeChoice, { content: JSX.Element | string; className: string }> = {
+  left: { content: "No", className: "swipe-badge-left" },
+  right: { content: "Yes", className: "swipe-badge-right" },
+  up: {
+    content: (
+      <>
+        <span>Superlike</span>
+        <span aria-hidden>✨</span>
+      </>
+    ),
+    className: "swipe-badge-up"
+  },
+  down: { content: "Unsure", className: "swipe-badge-down" }
 };
 
 export function FoodCard({
@@ -37,6 +55,7 @@ export function FoodCard({
   swipeDirection,
   onSwipeComplete
 }: FoodCardProps): JSX.Element {
+  const [imageFailed, setImageFailed] = useState(false);
   const exiting = swipeDirection ? SWIPE_OFFSETS[swipeDirection] : null;
   const activeDirection = swipeDirection ?? previewDirection ?? null;
   const badge = activeDirection ? SWIPE_BADGE[activeDirection] : null;
@@ -71,10 +90,20 @@ export function FoodCard({
           <span className="superlike-spark superlike-spark-4" />
         </div>
       ) : null}
-      {badge ? <span className={`swipe-badge ${badge.className}`}>{badge.label}</span> : null}
+      {badge ? <span className={`swipe-badge ${badge.className}`}>{badge.content}</span> : null}
       <div className="swipe-card-content">
         <div className="swipe-food-avatar" aria-hidden>
-          <img src={food.image} alt="" className="swipe-food-avatar-image" draggable={false} />
+          {imageFailed ? (
+            <span className="swipe-food-avatar-fallback">{getFoodEmoji(food)}</span>
+          ) : (
+            <img
+              src={food.image}
+              alt=""
+              className="swipe-food-avatar-image"
+              draggable={false}
+              onError={() => setImageFailed(true)}
+            />
+          )}
         </div>
         <h2>{`I love eating ${food.name.toLowerCase()}`}</h2>
       </div>
