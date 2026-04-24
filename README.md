@@ -1,276 +1,175 @@
 # CalorAI Taste Profile
 
-CalorAI Taste Profile is a 3-page React 18 + TypeScript app for onboarding new users through a swipe-based food preference flow. It implements the requested dark-mode experience, a custom light theme, Context-based state management, reusable hooks, smooth swipe interactions, and a responsive mobile-first UI.
+React app that captures food preferences through swipe interactions and generates a personalized taste-profile dashboard.
 
-## Live Status
+## Live Demo
 
-- App routes: `Intro`, `Swipe`, `Results`
-- Theme system: dark mode + custom light mode with persistence
-- Input support: touch, mouse, action buttons, and keyboard arrows
-- Verification completed: lint, tests, and production build
-- Deployment status: production build is ready, but live hosting still needs to be done manually outside this environment
-- Walkthrough video status: not recorded in this environment
+[https://taste-profile.onrender.com/](https://taste-profile.onrender.com/)
 
-## Screenshots
+## Features
 
-### Dark Theme
+- 3-screen flow: Intro -> Swipe -> Results
+- Swipe input via touch, mouse drag, action buttons, and keyboard
+- Four reactions: dislike, unsure, super-like, like
+- Real-time progress tracking
+- Data-driven highlights and results from `foods.json`
+- Shareable results links
+- Dark theme (reference implementation) + custom light theme
+- Theme and profile persistence via `localStorage`
+- Mobile-first responsive UI
+- Test coverage for key routes and interaction flows
 
-![Dark theme intro](./docs/screenshots/dark-theme.png)
+## Tech Stack
 
-### Light Theme
+- React
+- TypeScript
+- Vite
 
-![Light theme intro](./docs/screenshots/light-theme.png)
+- Framer Motion
+- Context API
+- CSS (token-based theming + glassmorphism)
+- Vitest + Testing Library
+- Render for Deployment
 
-## Demo Notes
+## Component Architecture Explanation
 
-- Local development: `npm run dev`
-- Production preview: `npm run build` then `npm run preview`
+- `src/App.tsx`: Route orchestration and shared-link routing
+- `src/components/AppFrame.tsx`: Shared phone shell and app chrome
+- `src/components/ThemeToggle.tsx`: Theme switch control
+- `src/pages/IntroPage.tsx`: Entry page
+- `src/pages/SwipePage.tsx`: Core interaction flow
+- `src/components/FoodCard.tsx`: Swipe card with animation states and badges
+- `src/components/SwipeActions.tsx`: Action buttons for all reaction types
+- `src/components/ProgressBar.tsx`: Swipe progress indicator
+- `src/pages/ResultsPage.tsx`: Data-driven results dashboard + share behavior
+- `src/components/InfoListCard.tsx`: Reusable list card for results sections
 
-## Component Architecture
+## State Management Approach And Rationale
 
-The app is organized around a small route shell with focused, reusable UI pieces:
-
-- `src/App.tsx`: top-level routes for `/intro`, `/swipe`, and `/results`
-- `src/components/AppFrame.tsx`: shared mobile device shell, status bar, and theme toggle container
-- `src/components/FoodCard.tsx`: swipeable card with motion states, preview badges, and image presentation
-- `src/components/SwipeActions.tsx`: action cluster for dislike, like, super-like, and unsure states
-- `src/components/ProgressBar.tsx`: progress indicator for swipe completion
-- `src/components/InfoListCard.tsx`: reusable results list card
-- `src/components/ThemeToggle.tsx`: theme switch UI backed by Context
-- `src/pages/*.tsx`: route-level screens composed from shared components
-
-## State Management Approach
-
-The app uses Context API as the required minimum and keeps state concerns intentionally separated:
+State is managed with Context API to keep architecture simple and explicit.
 
 - `ThemeContext`
-  - owns the current theme mode
-  - persists the theme to `localStorage`
-  - exposes `toggleTheme` and `setTheme`
+  - Stores current theme mode
+  - Persists theme mode to `localStorage`
+  - Applies theme using `data-theme` on the root element
+
 - `TasteProfileContext`
-  - owns swipe progress, current card index, and reaction history
-  - persists swipe data to `localStorage`
-  - derives liked, disliked, super-liked, and unsure buckets from source data
-  - drives results-page summaries from the recorded reactions
+  - Stores swipe decisions and current progression
+  - Persists profile state to `localStorage`
+  - Derives liked/disliked/super-liked/unsure collections for results
 
-Why Context here:
+Why Context:
 
-- It satisfies the task requirement directly.
-- The app has small, app-wide state domains that do not justify Redux complexity.
-- The separation between theme state and taste-profile state keeps rerenders predictable and the mental model simple.
+- App-level shared state is limited and well-scoped
+- No Redux/Zustand overhead required
+- Clear separation between theme concerns and domain (taste profile) concerns
 
-## Custom Hooks
+## Custom Hooks Documentation
 
-### `useLocalStorage`
+- `useLocalStorage`
+  - Generic persistence helper used by both contexts
+  - Handles hydration + updates to `localStorage`
 
-- Generic persistence hook for serializing state to `localStorage`
-- Used by both theme and taste-profile contexts
-- Keeps persistence logic out of UI components
+- `useSwipe`
+  - Encapsulates drag thresholds and intent detection
+  - Supports touch, mouse drag, and keyboard-triggered swipes
 
-### `useSwipe`
+- `useTheme`
+  - Thin consumer wrapper around `ThemeContext`
+  - Centralizes theme read/toggle usage in UI components
 
-- Encapsulates swipe threshold logic and gesture intent detection
-- Supports pointer drag interactions and keyboard arrow actions
-- Provides preview feedback before a swipe is committed
+## Light Mode Design Rationale
 
-### `useTheme`
+Light mode is intentionally designed, not simply inverted from dark mode.
 
-- Thin app-specific hook that exposes `ThemeContext`
-- Keeps theme consumption ergonomic inside components
-
-## Theme System
-
-Both themes use the same design-token system defined in `src/styles.css`.
-
-- No component hard-codes raw colors
-- CSS custom properties drive backgrounds, text, borders, accents, and surfaces
-- Theme mode is applied through `data-theme` on the root element
-- Theme transitions are animated for a smoother switch
-
-### Dark Mode
-
-The dark theme follows the requested glassmorphism direction:
-
-- layered gradients
-- translucent surfaces
-- soft border glow
-- luminous accent buttons
-- moody, high-contrast food-card presentation
-
-### Light Mode Design Rationale
-
-The light theme is intentionally not a simple inversion of dark mode. It is designed to feel like a calm nutrition and planning interface:
-
-- warm cream-to-mint atmospheric background
-- frosted pale-green cards to preserve the glass effect
-- deeper evergreen typography for stronger contrast
-- softer, sunlit accent treatment for CTA buttons
-- consistent component geometry so both themes feel like the same product
-
-## Feature Checklist Against The Brief
-
-- React 18+ with hooks only
-- Vite + TypeScript
-- 3-page app
-- Context API state management
-- Theme preference persisted to `localStorage`
-- Swipe data persisted to `localStorage`
-- Smooth swipe interactions with Framer Motion
-- Mouse, touch, button, and keyboard support
-- Progress tracking
-- Responsive mobile-first layout
-- Dark theme implemented
-- Custom light theme implemented
-- Glassmorphism styling in both themes
-- Reusable component architecture
-- At least 2 custom hooks
-- React Router
-- Unit and integration tests
-- Accessibility improvements
-
-## Accessibility Notes
-
-- Keyboard swipe support via arrow keys
-- Meaningful `aria-label`s on action buttons and pagination dots
-- Real image `alt` text on food cards
-- Improved contrast in the custom light theme
-
-## Libraries Used And Why
-
-- `react`
-  - core UI framework required for the task
-- `react-router-dom`
-  - keeps the 3-page flow explicit and easy to review
-- `framer-motion`
-  - handles drag gestures, transitions, and swipe feedback cleanly
-- `clsx`
-  - small helper for class composition
-- `vitest`
-  - lightweight test runner that fits naturally with Vite
-- `@testing-library/react` and `@testing-library/user-event`
-  - verify behavior from the user's perspective instead of implementation details
-
-## Testing
-
-Automated coverage currently includes:
-
-- root route redirect behavior
-- intro page render sanity check
-- shared-link redirect from the root route
-- theme persistence to `localStorage`
-- left-swipe and dislike regression coverage
-- keyboard navigation on the swipe screen
-- shared payload rendering on the results page
-- clipboard fallback coverage for shared links
-
-Commands run successfully:
-
-- `npm run lint`
-- `npm run test`
-- `npm run build`
-
-## Responsive And Browser QA
-
-Smoke checks were completed against the built app in Chromium-based browsers:
-
-- Edge mobile-sized intro screen
-- Edge mobile-sized swipe screen
-- Chrome desktop shared-results screen
-
-Remaining manual QA still recommended before submission:
-
-- Safari on iPhone
-- one Android device
-- final deployed-host share-link retest
+- Uses warm-neutral + fresh-green surfaces to keep the nutrition/wellness tone
+- Preserves glassmorphism through translucent panels, soft borders, and subtle depth
+- Improves readability with stronger text contrast and cleaner hierarchy
+- Reuses the same spacing/shape system for consistency between themes
 
 ## Setup Instructions
 
-### 1. Install dependencies
+1. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Start the dev server
+2. Start development server
 
 ```bash
 npm run dev
 ```
 
-### 3. Run lint
+3. Run lint
 
 ```bash
 npm run lint
 ```
 
-### 4. Run tests
+4. Run tests
 
 ```bash
 npm run test
 ```
 
-### 5. Build production assets
+5. Build production bundle
 
 ```bash
 npm run build
 ```
 
-## Project Structure
+## Libraries Used And Why
 
-```text
-src/
-  components/
-  contexts/
-  data/
-  hooks/
-  pages/
-  test/
-  types/
-```
+- `react`, `react-dom`: Core app runtime
+- `react-router-dom`: Route handling across the 3-page flow
+- `framer-motion`: Swipe gestures and transition animation
+- `clsx`: Conditional class composition
+- `typescript`: Type safety and maintainability
+- `vite`: Fast local dev and build tooling
+- `vitest`: Test runner aligned with Vite
+- `@testing-library/react`, `@testing-library/user-event`: Behavior-oriented component testing
 
 ## Time Breakdown
 
-Approximate implementation breakdown:
+Approximate active implementation time: 5 to 6 hours
 
-- 1.0h project audit and requirements gap analysis
-- 2.0h interaction, results-flow, and theme-system refinements
-- 1.0h accessibility and interaction polish
-- 0.75h automated tests and lint/build cleanup
-- 0.75h README, screenshots, and submission packaging
-
-Total: about 5.5 hours for the current polished version
+- 35m requirements review, solution planning, and architecture setup
+- 2h core intro, swipe flow and results derivation implementation
+- 1h theming system work (dark alignment + custom light mode)
+- 50m responsive behavior fixes and UI polish
+- 45m testing, bug fixes, lint/build verification, and final QA checks
+- 20m documentation cleanup and screenshot curation
 
 ## AI Tool Usage Notes
 
-AI was used as a coding partner for:
+AI tools were used as a coding partner for:
 
-- implementation planning
-- architecture review
-- identifying rubric gaps
-- refactoring suggestions
+- planning implementation steps
+- architecture review and cleanup
 - test-case brainstorming
-- README drafting and tightening
+- refactoring suggestions
+- README drafting
 
-All final code paths, fixes, and submission notes were manually reviewed and verified through lint, tests, and build output.
+All final code and docs were manually reviewed and validated through lint/test/build.
 
-## Challenges And Solutions
+## Screenshots 
 
-- Swipe-left originally behaved like an undo action instead of a dislike.
-  - Fixed by correcting the Context update flow so left is stored as a real reaction.
-- Existing source files had visible encoding corruption in multiple user-facing labels.
-  - Replaced corrupted strings and normalized visible copy.
-- Shared result links were brittle for real-device testing from nested routes.
-  - Updated the share flow to generate root-based URLs so the payload survives static-hosting route constraints more reliably.
+### Intro
 
-## Remaining Manual Submission Steps
+| Dark | Light |
+| --- | --- |
+| ![Intro - Dark](docs/screenshots/intro-dark-theme.png) | ![Intro - Light](docs/screenshots/intro-light-theme.png) |
 
-These are the only items still needing manual completion outside this environment:
+### Swipe
 
-- deploy the production build to Vercel, Netlify, or GitHub Pages
-- add the real live demo URL here once deployed
-- record the 5 to 10 minute walkthrough video
-- submit the final links through the provided form
+| Dark | Dark (Right Swipe) | Light (Left Swipe) |
+| --- | --- | --- |
+| ![Swipe - Dark](docs/screenshots/swipe-dark-theme.png) | ![Swipe - Dark (Right Swipe)](docs/screenshots/swipe-dark-swipe-right.png) | ![Swipe - Light](docs/screenshots/swipe-light-theme.png) |
 
-## Suggested Live Demo Slot
+### Results
 
-- `Live demo URL: pending deployment`
+| Dark | Light |
+| --- | --- |
+| ![Results - Dark](docs/screenshots/results-dark-theme.png) | ![Results - Light](docs/screenshots/results-light-theme.png) |
+
