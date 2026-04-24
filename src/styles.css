@@ -968,6 +968,10 @@ a {
   box-shadow: 0 0 30px rgba(255, 36, 36, 0.5);
 }
 
+.action-left .action-icon {
+  color: #ffd5d5;
+}
+
 .action-left::after {
   inset: 22%;
   filter: blur(10px);
@@ -980,6 +984,10 @@ a {
   box-shadow: 0 0 30px rgba(52, 255, 98, 0.5);
 }
 
+.action-right .action-icon {
+  color: #ffffff;
+}
+
 .action-right::after {
   inset: 22%;
   filter: blur(10px);
@@ -990,6 +998,10 @@ a {
   background: linear-gradient(180deg, #7048ff 0%, #56c9ff 100%);
   --rim-highlight: rgba(242, 245, 255, 0.96);
   box-shadow: none;
+}
+
+.action-up .action-icon {
+  color: #63e8e8;
 }
 
 .action-up::after {
@@ -1007,6 +1019,7 @@ a {
 }
 
 .action-down .action-icon {
+  color: #ffffff;
   mix-blend-mode: normal;
 }
 
