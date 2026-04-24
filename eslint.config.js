@@ -12,7 +12,11 @@ export default [
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       ecmaVersion: 2022,
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        ...globals.vitest
+      },
       parser: tsParser,
       parserOptions: {
         ecmaVersion: "latest",
@@ -28,7 +32,11 @@ export default [
       ...js.configs.recommended.rules,
       ...tseslint.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+      "no-undef": "off",
+      "react-refresh/only-export-components": [
+        "warn",
+        { allowConstantExport: true, allowExportNames: ["useTheme", "useTasteProfile"] }
+      ],
       "@typescript-eslint/consistent-type-imports": "error"
     }
   },
