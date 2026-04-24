@@ -3,6 +3,10 @@
 :root {
   --font-heading: "Space Grotesk", sans-serif;
   --font-body: "Sora", sans-serif;
+  --phone-shell-width: 440px;
+  --phone-shell-height: 956px;
+  --app-shell-padding-x: 24px;
+  --app-shell-padding-y: 0px;
   --radius-lg: 26px;
   --radius-md: 18px;
   --radius-pill: 999px;
@@ -96,6 +100,18 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+  min-height: 100vh;
+}
+
+html {
+  background: linear-gradient(140deg, var(--bg-start), var(--bg-end));
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -103,7 +119,7 @@ body {
   color: var(--text-primary);
   background: linear-gradient(140deg, var(--bg-start), var(--bg-end));
   transition: background var(--motion-slow) ease, color var(--motion-fast) ease;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 a {
@@ -112,18 +128,32 @@ a {
 
 .app-bg {
   min-height: 100vh;
+  height: 100vh;
   display: grid;
-  place-items: center;
-  padding: var(--space-4);
+  justify-items: center;
+  align-items: start;
+  padding: var(--app-shell-padding-y) var(--app-shell-padding-x);
   position: relative;
   overflow: hidden;
-  overflow-x: hidden;
+}
+
+.phone-shell-stage {
+  --shell-scale: min(
+    1,
+    calc((100vw - (var(--app-shell-padding-x) * 2)) / var(--phone-shell-width)),
+    calc((100vh - (var(--app-shell-padding-y) * 2)) / var(--phone-shell-height))
+  );
+  width: calc(var(--phone-shell-width) * var(--shell-scale));
+  height: calc(var(--phone-shell-height) * var(--shell-scale));
+  position: relative;
 }
 
 .phone-shell {
-  width: min(100%, 440px);
-  min-height: 956px;
-  max-height: 956px;
+  width: var(--phone-shell-width);
+  height: var(--phone-shell-height);
+  min-height: var(--phone-shell-height);
+  max-height: var(--phone-shell-height);
+  container-type: inline-size;
   border-radius: 34px;
   border: 1px solid var(--screen-border);
   background: var(--shell-bg);
@@ -133,6 +163,10 @@ a {
   display: flex;
   flex-direction: column;
   position: relative;
+  top: 0;
+  left: 0;
+  transform: scale(var(--shell-scale));
+  transform-origin: top left;
   overflow: hidden;
   overflow-x: hidden;
 }
@@ -241,6 +275,7 @@ a {
 
 .page-container {
   flex: 1;
+  min-height: 0;
   display: flex;
   align-items: stretch;
   overflow-y: auto;
@@ -283,9 +318,11 @@ a {
 
 .page-title-block.intro-title-block h1 {
   font-family: "SF Pro Display", "SF Pro Text", var(--font-heading), sans-serif;
-  font-size: 34px;
-  line-height: 44px;
+  max-width: 100%;
+  font-size: clamp(29px, 7cqw, 32px);
+  line-height: 1.2;
   letter-spacing: 0.4px;
+  text-wrap: balance;
 }
 
 .intro-title-block p {
@@ -294,15 +331,24 @@ a {
 
 .page-title-block h1 {
   margin: 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   font-family: var(--font-heading);
   letter-spacing: -0.02em;
   font-size: clamp(1.65rem, 2.6vw, 2rem);
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .page-title-block p {
   margin: 0.35rem 0 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   color: var(--text-secondary);
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .hero-card,
@@ -619,6 +665,9 @@ a {
   position: relative;
   z-index: 1;
   text-align: center;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: var(--space-3);
   display: flex;
   flex-direction: column;
@@ -627,6 +676,9 @@ a {
 }
 
 .intro-card-content {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   justify-content: center;
   gap: 31px;
   padding: 45px 12px;
@@ -639,11 +691,16 @@ a {
 
 .intro-card-content h2 {
   margin: 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   font-family: "SF Pro Display", "SF Pro Text", var(--font-heading), sans-serif;
   font-size: 26px;
   line-height: 30px;
   letter-spacing: -0.56px;
   color: var(--intro-copy);
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .intro-card-content h2 + p {
@@ -652,14 +709,16 @@ a {
 
 .intro-card-content p {
   margin: 0;
-  width: 378px;
+  width: 100%;
   max-width: 100%;
+  min-width: 0;
   font-family: "SF Pro Display", "SF Pro Text", var(--font-body), sans-serif;
   font-size: 20px;
   font-weight: 400;
   line-height: 30px;
   letter-spacing: -0.56px;
   color: var(--intro-copy);
+  overflow-wrap: anywhere;
 }
 
 .intro-card-content .muted {
@@ -688,8 +747,9 @@ a {
 }
 
 .intro-note {
-  width: 378px;
+  width: 100%;
   max-width: 100%;
+  min-width: 0;
   color: var(--intro-copy);
   font-size: 15px;
   font-weight: 400;
@@ -718,8 +778,14 @@ a {
 
 .swipe-card-content h2 {
   margin: 0;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   font-family: var(--font-heading);
-  font-size: 1.90rem;
+  font-size: clamp(1.6rem, 7.2cqw, 1.9rem);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
 }
 
 .swipe-card-content p {
@@ -734,12 +800,18 @@ a {
 
 .actions-wrap {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: flex-end;
-  gap: 28px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  gap: clamp(8px, 3.2cqw, 18px);
   min-height: 112px;
+  padding-left: clamp(8px, 3cqw, 16px);
+  padding-right: clamp(8px, 3cqw, 16px);
   padding-top: 0.05rem;
   padding-bottom: 8px;
+  overflow: visible;
 }
 
 .action-stack {
@@ -748,10 +820,12 @@ a {
   align-items: center;
   justify-content: flex-end;
   gap: 16px;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .action-large {
-  width: 76px;
+  width: clamp(60px, 17cqw, 76px);
   height: 108px;
 }
 
@@ -760,16 +834,16 @@ a {
 }
 
 .group-39 {
-  width: 56px;
+  width: clamp(44px, 12.75cqw, 56px);
 }
 
 .group-40 {
-  width: 65px;
+  width: clamp(50px, 14.75cqw, 65px);
 }
 
 .group-42,
 .group-43 {
-  width: 76px;
+  width: clamp(60px, 17cqw, 76px);
 }
 
 .swipe-action {
@@ -778,8 +852,8 @@ a {
   --rim-size: 2px;
   border: 0;
   border-radius: 50%;
-  width: 76px;
-  height: 76px;
+  width: clamp(60px, 17cqw, 76px);
+  height: clamp(60px, 17cqw, 76px);
   aspect-ratio: 1 / 1;
   padding: 0;
   color: #fff;
@@ -791,8 +865,8 @@ a {
 }
 
 .action-small .swipe-action {
-  width: 56px;
-  height: 62px;
+  width: clamp(44px, 12.75cqw, 56px);
+  height: clamp(48px, 14cqw, 62px);
   aspect-ratio: auto;
   --rim-size: 1.6px;
 }
@@ -840,14 +914,14 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 76px;
-  height: 76px;
+  width: clamp(60px, 17cqw, 76px);
+  height: clamp(60px, 17cqw, 76px);
   aspect-ratio: 1 / 1;
 }
 
 .action-small .action-icon-wrap {
-  width: 44px;
-  height: 44px;
+  width: clamp(36px, 10cqw, 44px);
+  height: clamp(36px, 10cqw, 44px);
   aspect-ratio: auto;
 }
 
@@ -865,7 +939,7 @@ a {
 .action-label {
   font-family: "SF Pro Display", "SF Pro Text", "Sora", sans-serif;
   font-weight: 510;
-  font-size: 11.6092px;
+  font-size: clamp(10px, 2.6cqw, 11.6092px);
   line-height: 14px;
   color: var(--action-label-color);
   text-align: center;
@@ -942,10 +1016,12 @@ a {
 
 .results-title-block h1 {
   font-family: "SF Pro Display", "SF Pro Text", var(--font-heading), sans-serif;
-  font-size: 34px;
-  line-height: 41px;
+  max-width: 100%;
+  font-size: clamp(29px, 6.6cqw, 32px);
+  line-height: 1.15;
   letter-spacing: 0.4px;
   color: var(--title-primary);
+  text-wrap: balance;
 }
 
 .results-title-block p {
@@ -1465,14 +1541,29 @@ a {
 }
 
 @media (max-width: 600px) {
+  html,
+  body,
+  #root {
+    min-height: 100dvh;
+  }
+
   .app-bg {
+    min-height: 100dvh;
+    height: 100dvh;
     padding: 0;
+  }
+
+  .phone-shell-stage {
+    width: 100%;
+    height: 100%;
+    --shell-scale: 1;
   }
 
   .phone-shell {
     width: 100%;
-    min-height: 100vh;
-    max-height: 100vh;
+    height: 100dvh;
+    min-height: 100dvh;
+    max-height: 100dvh;
     padding: 0 16px 16px;
     border-radius: 0;
     border: 0;
